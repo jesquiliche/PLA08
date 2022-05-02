@@ -1,0 +1,15 @@
+<?php
+
+class MyPersonaDAO extends BaseDao{
+
+    function __construct()
+    {
+        parent::setTable("personas");
+        parent::setPrimaryKey("idpersona");
+    }
+    function setTable(string $table){
+        parent::setTable($table);
+
+    }
+
+}

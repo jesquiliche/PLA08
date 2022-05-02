@@ -6,13 +6,13 @@ interface ICrudDAO {
     public function Create(array $obj);
    
 
-    public function Update(array $obj,string $keyID);
+    public function Update(array $obj);
     
 
     public function FindAll():array; 
-    public function FindById($id):array;
+    public function FindById(string $id):array;
 
-    public function Destroy($id);
+    public function Destroy(int $id);
    
     
     
