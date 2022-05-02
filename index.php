@@ -7,15 +7,16 @@
     $cuenta=new CuentaDao();
 
     $obj=[
+            "idcuenta"=>3,
             "entidad" => "0001",
             "oficina" => "0201",
             "dc" => "10",
-            "cuenta" => "020012000",
-            "saldo" => 45000.00,
+            "cuenta" => "02001203010",
+            "saldo" => 99999.00,
             "idpersona" => 80
     ];
-    $cuenta->Create($obj);
-    //$cuenta->Update($obj);
+    //$cuenta->Create($obj);
+    $cuenta->Update($obj,"idcuenta");
     //print_r($cuenta->FindAll());
     //print_r($cuenta->FindById(5));
     //$cuenta->Update();

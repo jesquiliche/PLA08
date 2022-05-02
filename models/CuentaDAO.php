@@ -12,7 +12,6 @@ final class CuentaDao implements ICrudDAO{
         $this->con=DBConnection::connect();
         $sqlInsert="INSERT INTO $this->table(";
         $sqlValues=" VALUES(";
-        $sqlParams=" VALUES(";
     
         //Leer lista de campos del Array
         foreach($obj as $key=>$valor){
@@ -54,15 +53,54 @@ final class CuentaDao implements ICrudDAO{
         
     }
 
-    public function Update($obj){
+    public function Update($obj,$idKey){
         $this->con=DBConnection::connect();
-        print_r($obj);
-        echo "Update \n";
+        $sqlUpdate="UPDATE $this->table SET ";
+        $sqlValues=" VALUES(";
+        
+    
+        //Leer lista de campos del Array
+        foreach($obj as $key=>$valor){
+        
+                
+                 
+                $valor=$obj[$key];
+                $tipo=gettype($valor);
+                
+                //Si no es el campo clave actualizar
+                if($key!=$idKey){
+                    //Construir el values a partir del tipo de dato
+                    //Si es string lo encerrara entre comillas simples
+                    $sqlUpdate.="$key";
+                    switch($tipo){
+                        case "string";
+                            $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
+                            $sqlUpdate.="='$valor', ";
+                            break;
+                        case "integer";
+                            $valor=(int)$valor;
+                            $sqlUpdate.="=$valor, ";;
+                            break;
+                        case "double";
+                            $valor=floatval($valor);
+                            $sqlUpdate.="=$valor, ";                        
+                            break;
+                        default;
+                            $sqlUpdate.="=$valor, ";
+                            break;      
+                    }
+                }
+                
+        }
+        $sqlUpdate=substr($sqlUpdate, 0, -2);
+        $sqlUpdate.= " WHERE $idKey=$obj[$idKey]";
+        $this->con->exec($sqlUpdate);
+        print $sqlUpdate;
     }
 
     public function FindAll():array{
         $this->con=DBConnection::connect();
-        $stmt = $this->con->query('SELECT * FROM cuentas');
+        $stmt = $this->con->query("SELECT * FROM $this->table");
     
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -71,7 +109,7 @@ final class CuentaDao implements ICrudDAO{
         $this->con=DBConnection::connect();
     
         $stmt=$this->con->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        $stmt = $this->con->prepare("SELECT * FROM cuentas WHERE idcuenta = ?");
+        $stmt = $this->con->prepare("SELECT * FROM $this->table WHERE idcuenta = ?");
         $stmt->execute(array($id));
     
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

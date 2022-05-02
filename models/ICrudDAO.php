@@ -6,7 +6,7 @@ interface ICrudDAO {
     public function Create(array $obj);
    
 
-    public function Update(array $obj);
+    public function Update(array $obj,string $keyID);
     
 
     public function FindAll():array; 
