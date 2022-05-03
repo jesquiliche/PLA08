@@ -4,14 +4,6 @@
 	require_once "./models/MyPersonaDAO.php";
 	//inicializar variables
 
-	$idpersona="";
-	$nif="";
-	$nombre="";
-	$apellidos="";
-	$direccion="";
-	$telefono="";
-	$email="";
-	
 	//Construimos el objeto de acceso a datos
 	//Patrón de diseño DAO
 	$persona=new MyPersonaDAO();
@@ -23,25 +15,11 @@
 
 	if(isset($_POST['modificacion'])){
 		$persona->setExclude('modificacion');
-			
+		echo $_POST['idpersona'];
+		$persona->FindById($_POST['idpersona']);
 		$datos=$persona->FindById($_POST['idpersona']);
-	
-		$idpersona=$datos['idpersona'];
-		$nif=$datos['nif'];
-		$nombre=$datos['nombre'];
-		$apellidos=$datos['apellidos'];
-		$direccion=$datos['direccion'];
-		$telefono=$datos['telefono'];
-		$email=$datos['email'];
+		print_r($datos);
 	}
-
-	if(isset($_POST['baja'])){
-		
-		$persona->setPrimaryKey('idpersona');	
-		$persona->Destroy($_POST['idpersona']);
-	
-	}
-
 
 
 
@@ -70,56 +48,41 @@
 <body>
 	<div class='container'>
 		<form id='formulario' method='post' action='#'>
-			<input type='hidden' 
-			value='<?=$idpersona?>'
-			id='idpersona' name='idpersona'>
+			<input type='hidden' id='idpersona' name='idpersona'>
 			<div class="row mb-3">
 			    <label for="nif" class="col-sm-2 col-form-label">NIF</label>
 			    <div class="col-sm-10">
-			      <input type="text" 
-				  value='<?=$nif?>'
-				  class="form-control" id="nif" name='nif'>
+			      <input type="text" class="form-control" id="nif" name='nif'>
 			    </div>
 			</div>
 			<div class="row mb-3">
 			    <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
 			    <div class="col-sm-10">
-			      <input type="text" 
-				  value='<?=$nombre?>'
-				  class="form-control" id="nombre" name="nombre">
+			      <input type="text" class="form-control" id="nombre" name="nombre">
 			    </div>
 			</div>
 			<div class="row mb-3">
 			    <label for="apellidos" class="col-sm-2 col-form-label">Apellidos</label>
 			    <div class="col-sm-10">
-			      <input type="text" 
-				  value='<?=$apellidos?>' 
-				  class="form-control" id="apellidos" name="apellidos">
+			      <input type="text" class="form-control" id="apellidos" name="apellidos">
 			    </div>
 			</div>
 			<div class="row mb-3">
 			    <label for="direccion" class="col-sm-2 col-form-label">Dirección</label>
 			    <div class="col-sm-10">
-			      <input type="text" 
-				  value='<?=$direccion?>'
-				  class="form-control" id="direccion" name="direccion">
+			      <input type="text" class="form-control" id="direccion" name="direccion">
 			    </div>
 			</div>
 			<div class="row mb-3">
 			    <label for="telefono" class="col-sm-2 col-form-label">Teléfono</label>
 			    <div class="col-sm-10">
-			      <input type="text" 
-				  value='<?=$telefono?>'
-				  class="form-control" id="telefono" name="telefono">
+			      <input type="text" class="form-control" id="telefono" name="telefono">
 			    </div>
 			</div>
 			<div class="row mb-3">
 			    <label for="email" class="col-sm-2 col-form-label">Email</label>
 			    <div class="col-sm-10">
-			      
-				<input type="email" 
-					value='<?=$telefono?>'
-				  class="form-control" id="email" name="email">
+			      <input type="email" class="form-control" id="email" name="email">
 			    </div>
 			</div>
 			<label class="col-sm-2 col-form-label"></label>
@@ -131,16 +94,18 @@
 			<p class='mensajes'></p>
 		</form><br><br>
 		<table id='listapersonas' class="table table-striped">
-		<tr>
-		<th>Nif</th>
-	<th>Nombre</th>
-	<th>Apellidos</th>
-	</tr>
-	
-		<?php 
+
+		</table>
+	</div>
+	<form id='formconsulta' method='post' action='#'>
+		<input type='hidden' id='consulta' name='consulta'>
+	</form>
+	<div class="container">
+	<table id='listapersonas' class="table table-striped">
+	<?php 
 	  $personas=$persona->FindAll();
 	  foreach($personas as $row) {
-		echo "<tr data-id=$row[idpersona]>";
+		echo "<tr data-id='$row[idpersona]'";
 		echo "<td></td>";
 		echo "<td>$row[nif]</td>";
 		echo "<td>$row[nombre]</td>";
@@ -148,12 +113,34 @@
 		echo "</tr>";
 	  }
 	  ?>
-		</table>
-	</div>
-	<form id='formconsulta' method='post' action='#'>
-		<input type='hidden' id='consulta' name='consulta'>
-	</form>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-	<script type="text/javascript" src='scripts/script.js'></script>
+	</table>
+	<table id='listaper' class="table table-striped">
+  
+	<th>Nif</th>
+	<th>Nombre</th>
+	<th>Apellidos</th>
+	<tr>
+		<td>ewewe</td>
+	</tr>
+	  <?php /*
+	  $personas=$persona->FindAll();
+	  foreach($personas as $row) {
+		echo "<tr data-id='$row[idpersona]'";
+		echo "<td></td>";
+		echo "<td>$row[nif]</td>";
+		echo "<td>$row[nombre]</td>";
+		echo "<td>$row[apellidos]</td>";
+		echo "</tr>";
+	  }*/
+
+	  ?>
+
+  
+    
+</table>
+
+</div>
+<!--	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+	-->	<script type="text/javascript" src='./scripts/script.js'></script>
 </body>
 </html>

@@ -1,15 +1,14 @@
-body {background-color: lightgreen;}
+body {background-color: rgb(255, 255, 255);}
 .container {width: 60%; margin: 50px auto}
 label {font-weight: bold;}
 input[type='button'], input[type='reset'], input[type='submit'] {width: auto;}
 form:not(#formconsulta) {
-	background-color: lightblue;
+	background-color: rgb(216, 238, 245);
 	padding: 20px;
 	border: 1px solid black;		
 	border-radius: 10px;
-	box-shadow: 5px 5px 3px green;
+	box-shadow: 5px 5px 3px rgb(79, 80, 79);
 }
-table {width: 400px;margin: auto}
-table, td, th {border: 1px solid blue}
+
 td {cursor: pointer;}
 tr:not(:first-child):hover {background-color: lightblue;}
