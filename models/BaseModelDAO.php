@@ -54,11 +54,12 @@ abstract class BaseDao implements ICrudDAO{
                     $valor=$obj[$key];
                     $tipo=gettype($valor);
                                 
+                    $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
                     //Construir el values a partir del tipo de dato
                     //Si es string lo encerrara entre comillas simples
                     switch($tipo){
                         case "string";
-                            $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
+                            
                             $sqlValues.="'$valor',";
                             break;
                         case "integer";
@@ -101,9 +102,11 @@ abstract class BaseDao implements ICrudDAO{
             
         
             //Leer lista de campos del Array
-            foreach($obj as $key=>$valor){
-                    
+            
+                foreach($obj as $key=>$valor){
+                    if($key!==$this->exclude){        
                     $valor=$obj[$key];
+                    $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
                     $tipo=gettype($valor);
                     
                     //Si no es el campo clave actualizar
@@ -113,7 +116,7 @@ abstract class BaseDao implements ICrudDAO{
                         $sqlUpdate.="$key";
                         switch($tipo){
                             case "string";
-                                $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
+                                
                                 $sqlUpdate.="='$valor', ";
                                 break;
                             case "integer";
@@ -129,7 +132,7 @@ abstract class BaseDao implements ICrudDAO{
                                 break;      
                         }
                     }
-                    
+                }   
             }
             $sqlUpdate=substr($sqlUpdate, 0, -2);
             $sqlUpdate.= " WHERE $this->primaryKey=".$obj[$this->primaryKey];

@@ -24,7 +24,13 @@
 	if(isset($_POST['modificacion'])){
 		$persona->setExclude('modificacion');
 			
-		$datos=$persona->FindById($_POST['idpersona']);
+		$datos=$persona->Update($_POST);
+	}
+
+	if(isset($_POST['consulta'])){
+		$persona->setExclude('consulta');
+			
+		$datos=$persona->FindById($_POST['consulta']);
 	
 		$idpersona=$datos['idpersona'];
 		$nif=$datos['nif'];
@@ -34,6 +40,7 @@
 		$telefono=$datos['telefono'];
 		$email=$datos['email'];
 	}
+
 
 	if(isset($_POST['baja'])){
 		
@@ -118,7 +125,7 @@
 			    <div class="col-sm-10">
 			      
 				<input type="email" 
-					value='<?=$telefono?>'
+					value='<?=$email?>'
 				  class="form-control" id="email" name="email">
 			    </div>
 			</div>
@@ -132,16 +139,15 @@
 		</form><br><br>
 		<table id='listapersonas' class="table table-striped">
 		<tr>
-		<th>Nif</th>
-	<th>Nombre</th>
-	<th>Apellidos</th>
-	</tr>
+			<th>Nif</th>
+			<th>Nombre</th>
+			<th>Apellidos</th>
+		</tr>
 	
 		<?php 
 	  $personas=$persona->FindAll();
 	  foreach($personas as $row) {
 		echo "<tr data-id=$row[idpersona]>";
-		echo "<td></td>";
 		echo "<td>$row[nif]</td>";
 		echo "<td>$row[nombre]</td>";
 		echo "<td>$row[apellidos]</td>";

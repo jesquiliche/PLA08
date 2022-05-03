@@ -17,12 +17,12 @@ function consultaPersona(td) {
 
 	//recuperar el atributo data-id de la <tr>
 	let idpersona = tr.getAttribute('data-id')
-	alert(idpersona);
+
 
 	//trasladar el id al formulario oculto
 	document.querySelector('#idpersona').value = idpersona
 
 	//submit del formulario oculto
 	document.querySelector('#consulta').value = idpersona
-	//document.querySelector('#formconsulta').submit()
+	document.querySelector('#formconsulta').submit()
 }
