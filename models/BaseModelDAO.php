@@ -88,7 +88,7 @@ abstract class BaseDao implements ICrudDAO{
 
         } catch(Exception $e){
             $this->con=null;
-            throw new Exception($e->getMessage(), 1);
+            throw new Exception($e->getMessage(),$e->getCode());
                        
         }
         
