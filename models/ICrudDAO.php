@@ -3,10 +3,10 @@
 interface ICrudDAO {
 
 
-    public function Create(array $obj);
+    public function Create(array $obj):int;
    
 
-    public function Update(array $obj);
+    public function Update(array $obj):int;
     
 
     public function FindAll():array; 

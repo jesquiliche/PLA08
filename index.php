@@ -12,6 +12,7 @@
 	$direccion="";
 	$telefono="";
 	$email="";
+	$mensaje="";
 	//if(isset($errores) && $errores>0 ) cargaDatos($_POST);
 	$errores=array();
 	
@@ -24,24 +25,21 @@
 		if(validarDatos($_POST)){
 			try{
 				$persona->setExclude('alta');
-				$persona->Create($_POST);
+				if($persona->Create($_POST)>0)
+					$mensaje="Persona dada de alta";
 			} catch(Exception $e){
-			
 				if($e->getCode()==23000)
 					array_push($errores,"El nif ya existe en la Base de datos");
-				
 			}
-		
 		}
-		
 	}
 
 	if(isset($_POST['modificacion'])){
 		if(validarDatos($_POST)){
 			$persona->setExclude('modificacion');
-			$datos=$persona->Update($_POST);
+			if($datos=$persona->Update($_POST)>0)
+				$mensaje="Datos modificados";
 		}
-	
 	}
 
 	if(isset($_POST['consulta'])){
@@ -52,7 +50,6 @@
 
 
 	if(isset($_POST['baja'])){
-		
 		try{
 			$persona->setPrimaryKey('idpersona');	
 			$persona->Destroy($_POST['idpersona']);
@@ -61,9 +58,6 @@
 				array_push($errores,"Esta persona no se puede borrar de la base de datos. \nTiene cuentas asociadas");
 				cargaDatos($_POST);
 		}
-	
-
-	
 	}
 
 	function validarDatos($datos){
@@ -73,7 +67,9 @@
 		global $apellidos;
 		global $direccion;
 		global $email;
-
+		global $idpersona;
+		
+		$idpersona=$datos["idpersona"];
 		$nif=$datos["nif"];
 		if(!isset($nif) || isEmpty($nif)){
 			array_push($errores,"El nif es requerido.");
@@ -100,7 +96,6 @@
 			return false;
 		else
 			return true;
-		
 	}
 
 	function cargaDatos($datos){
@@ -120,22 +115,7 @@
 		$direccion=$datos['direccion'];
 		$telefono=$datos['telefono'];
 		$email=$datos['email'];
-
 	}
-	
-
-
-
-//ALTA
-
-//MODIFICACION
-
-//BAJA
-
-//CONSULTA DE UNA PERSONA DE LA TABLA
-
-//CONSULTA DE TODAS LAS PERSONAS
-
 ?>
 
 <html>
@@ -208,7 +188,7 @@
 			<button type="reset" class="btn btn-success">Limpiar</button>
 			<label class="col-sm-2 col-form-label"></label>
 			<p class='mensajes'>
-			
+				<?=$mensaje?>
 				<?=showErrors($errores)?>
 			</p>
 		</form><br><br>

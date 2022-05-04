@@ -40,7 +40,7 @@ abstract class BaseDao implements ICrudDAO{
 
     //Recibimos un array asociativo con los nombres de los camps
     //y sus respectivos valores
-    public function Create($obj){
+    public function Create($obj):int{
         try {
             $this->con=DBConnection::connect();
             $sqlInsert="INSERT INTO $this->table(";
@@ -80,12 +80,11 @@ abstract class BaseDao implements ICrudDAO{
             //Quitar última coma de las cadenas y cerrarlas con parentesis
             $sqlInsert=substr($sqlInsert, 0, -1).") \n";
             $sqlValues=substr($sqlValues, 0, -1).") ";
-            $this->con->exec($sqlInsert.$sqlValues);
-            
-            print $sqlInsert;
-            print $sqlValues."\n";
-           
-
+            $smt=$this->con->prepare($sqlInsert.$sqlValues);
+            $smt->execute();
+            return $smt->rowCount();
+            //$this->con->exec($sqlInsert.$sqlValues);
+        
         } catch(Exception $e){
             $this->con=null;
             throw new Exception($e->getMessage(),$e->getCode());
@@ -94,7 +93,7 @@ abstract class BaseDao implements ICrudDAO{
         
     }
 
-    public function Update($obj){
+    public function Update($obj):int{
         try{
             $this->con=DBConnection::connect();
             $sqlUpdate="UPDATE $this->table SET ";
@@ -136,8 +135,11 @@ abstract class BaseDao implements ICrudDAO{
             }
             $sqlUpdate=substr($sqlUpdate, 0, -2);
             $sqlUpdate.= " WHERE $this->primaryKey=".$obj[$this->primaryKey];
-            $this->con->exec($sqlUpdate);
-            print $sqlUpdate;
+            $stmt=$this->con->prepare($sqlUpdate);
+           
+            
+            return $stmt->execute();
+
         }catch(Exception $e){
             $this->con=null;
             throw new Exception($e->getMessage(), 1);
