@@ -59,6 +59,64 @@ function showErrors(&$errores)
     }
 }
 
+function validarDatos($datos){
+    global $errores;
+    global $nif;
+    global $nombre;
+    global $apellidos;
+    global $direccion;
+    global $email;
+    global $idpersona;
+    
+    $idpersona=$datos["idpersona"];
+    $nif=$datos["nif"];
+    if(!isset($nif) || isEmpty($nif)){
+        array_push($errores,"El nif es requerido.");
+    }
+    $nombre=$datos["nombre"];
+    if(!isset($nombre) ||isEmpty($datos["nombre"])){
+        array_push($errores,"El nombre es requerido");
+    }
+    $apellidos=$datos["apellidos"];
+    if(!isset($apellidos) || isEmpty($apellidos)){
+        array_push($errores,"Los apellidos son requeridos");
+    }
+    $direccion=$datos["direccion"];
+    if(!isset($direccion) || isEmpty($direccion)){
+        array_push($errores,"La dirección es requerida");
+    }
+    $email=$datos["email"];
+    if(!isset($email) || !validateEmail($email)){
+        array_push($errores,"El email debe tener un formato valido");
+    }
+    
+    error_reporting(E_ALL ^ E_NOTICE);
+    if(count($errores)>0)
+        return false;
+    else
+        return true;
+}
+
+function cargaDatos($datos){
+    global $idpersona;
+    global $nif;
+    global $idpersona;
+    global $nombre;
+    global $apellidos;
+    global $direccion;
+    global $telefono;
+    global $email;
+
+    $idpersona=$datos['idpersona'];
+    $nif=$datos['nif'];
+    $nombre=$datos['nombre'];
+    $apellidos=$datos['apellidos'];
+    $direccion=$datos['direccion'];
+    $telefono=$datos['telefono'];
+    $email=$datos['email'];
+}
+
+
 
 
 
