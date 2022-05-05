@@ -67,8 +67,10 @@ function validarDatos($datos){
     global $direccion;
     global $email;
     global $idpersona;
+    global $telefono;
     
     $idpersona=$datos["idpersona"];
+    $telefono=$datos["telefono"];
     $nif=$datos["nif"];
     if(!isset($nif) || isEmpty($nif)){
         array_push($errores,"El nif es requerido.");

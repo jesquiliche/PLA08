@@ -59,9 +59,7 @@ abstract class BaseDao implements ICrudDAO{
             //Quitar última coma de las cadenas y cerrarlas con parentesis
          
             $sqlInsert=substr($sqlInsert, 0, -1).") \n";
-           // print $sqlInsert;
             $sqlValues=substr($sqlValues, 0, -1).") ";
-            print $sqlValues;
             $smt=$this->con->prepare($sqlInsert.$sqlValues);
             $smt->execute($valores);
             return $smt->rowCount();
@@ -106,7 +104,7 @@ abstract class BaseDao implements ICrudDAO{
 
         }catch(Exception $e){
             $this->con=null;
-            throw new Exception($e->getMessage(), 1);
+            throw new Exception($e->getMessage(), 23000);
         }
     }
 

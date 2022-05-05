@@ -50,6 +50,7 @@
 	if(isset($_POST['alta'])){
 		if(validarDatos($_POST)){
 			try{
+				
 				$persona->setExclude('alta');
 				if($persona->Create($_POST)>0)
 					$mensaje="Persona dada de alta";
@@ -61,14 +62,27 @@
 	}
 
 	if(isset($_POST['modificacion'])){
-		if(validarDatos($_POST)){
-			$persona->setExclude('modificacion');
-			if($datos=$persona->Update($_POST)>0)
-				$mensaje="Datos modificados";
-			else
-				$mensaje="Esta persona ya no se encuentra en la BB.DD";
-			limpiar();
+		try {
+			if(validarDatos($_POST)){
+				$modificaciones=$persona->IsModifiedRecord($_POST['idpersona'],$_POST,$nif2);
+				if(!$modificaciones){
+					$mensaje="persona no mofificada";
+			
+				} else {
+					print $nif2;
+					$persona->setExclude('modificacion');
+					if($datos=$persona->Update($_POST)>0)
+						$mensaje="Datos modificados";
+					else
+						$mensaje="Esta persona ya no se encuentra en la BB.DD";
+					limpiar();
+				}
+			}
+		}catch(Exception $e){
+			if($e->getCode()==23000)
+			array_push($errores,"El nif ya existe en la Base de datos");
 		}
+		
 	}
 
 	if(isset($_POST['consulta'])){
@@ -107,10 +121,14 @@
 			value='<?=$idpersona?>'
 			id='idpersona' name='idpersona'>
 			<div class="row mb-3">
-			    <label for="nif" class="col-sm-2 col-form-label">NIF</label>
+			    <label for="nif" 
+					class="col-sm-2 col-form-label"
+					>NIF</label>
 			    <div class="col-sm-10">
-			      <input type="text" 
+			      <input type="text"
+				  maxlength="9" 
 				  value='<?=$nif?>'
+				  required
 				  class="form-control" id="nif" name='nif'>
 			    </div>
 			</div>
@@ -119,6 +137,8 @@
 			    <div class="col-sm-10">
 			      <input type="text" 
 				  value='<?=$nombre?>'
+				  maxlength="40"
+				  required
 				  class="form-control" id="nombre" name="nombre">
 			    </div>
 			</div>
@@ -126,7 +146,9 @@
 			    <label for="apellidos" class="col-sm-2 col-form-label">Apellidos</label>
 			    <div class="col-sm-10">
 			      <input type="text" 
-				  value='<?=$apellidos?>' 
+				  value='<?=$apellidos?>'
+				  maxlength="80"
+				  required 
 				  class="form-control" id="apellidos" name="apellidos">
 			    </div>
 			</div>
@@ -135,6 +157,8 @@
 			    <div class="col-sm-10">
 			      <input type="text" 
 				  value='<?=$direccion?>'
+				  maxlength="120"
+				  required
 				  class="form-control" id="direccion" name="direccion">
 			    </div>
 			</div>
@@ -142,6 +166,8 @@
 			    <label for="telefono" class="col-sm-2 col-form-label">Teléfono</label>
 			    <div class="col-sm-10">
 			      <input type="text" 
+				  maxlength="9"
+				  required
 				  value='<?=$telefono?>'
 				  class="form-control" id="telefono" name="telefono">
 			    </div>
@@ -150,8 +176,10 @@
 			    <label for="email" class="col-sm-2 col-form-label">Email</label>
 			    <div class="col-sm-10">
 			      
-				<input type="email" 
+				<input type="email"
+					maxlength="80" 
 					value='<?=$email?>'
+					required
 				  class="form-control" id="email" name="email">
 			    </div>
 			</div>
