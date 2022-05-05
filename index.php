@@ -13,8 +13,34 @@
 	$telefono="";
 	$email="";
 	$mensaje="";
-	//if(isset($errores) && $errores>0 ) cargaDatos($_POST);
 	$errores=array();
+
+	function limpiar(){
+		global $idpersona;
+		global $nif;
+		global $nombre;
+		global $apellidos;
+		global $direccion;
+		global $telefono;
+		global $email;
+		global $mensaje;
+		global $errores;
+		
+		$idpersona="";
+		$nif="";
+		$nombre="";
+		$apellidos="";
+		$direccion="";
+		$telefono="";
+		$email="";
+		$mensaje="";
+		$errores=array();
+	
+	}
+	
+	
+	
+
 	
 
 	//Construimos el objeto de acceso a datos
@@ -39,6 +65,9 @@
 			$persona->setExclude('modificacion');
 			if($datos=$persona->Update($_POST)>0)
 				$mensaje="Datos modificados";
+			else
+				$mensaje="Esta persona ya no se encuentra en la BB.DD";
+			limpiar();
 		}
 	}
 
@@ -51,16 +80,16 @@
 	if(isset($_POST['baja'])){
 		try{
 			$persona->setPrimaryKey('idpersona');	
-			$persona->Destroy($_POST['idpersona']);
-			} catch(Exception $e){
+			if($persona->Destroy($_POST['idpersona'])>0)
+				$mensaje="Persona dada de baja";
+			else
+				$mensaje="Esta persona ya no se encuentre en la BB.DD";	
+		} catch(Exception $e){
 			if($e->getCode()==23000)
 				array_push($errores,"Esta persona no se puede borrar de la base de datos. \nTiene cuentas asociadas");
 				cargaDatos($_POST);
 		}
 	}
-
-
-	
 ?>
 
 <html>

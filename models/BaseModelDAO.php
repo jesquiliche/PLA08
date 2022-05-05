@@ -45,8 +45,13 @@ abstract class BaseDao implements ICrudDAO{
             $this->con=DBConnection::connect();
             $sqlInsert="INSERT INTO $this->table(";
             $sqlValues=" VALUES(";
-    
+            print $obj["nombre"];
+            $valor= $obj["nombre"];
+            $valor= filter_var($valor,FILTER_SANITIZE_STRIPPED);
            
+        
+        
+            return 0;
             //Leer lista de campos del Array
             foreach($obj as $key=>$valor){
                 if($key!==$this->exclude){
@@ -59,7 +64,6 @@ abstract class BaseDao implements ICrudDAO{
                     //Si es string lo encerrara entre comillas simples
                     switch($tipo){
                         case "string";
-                            
                             $sqlValues.="'$valor',";
                             break;
                         case "integer";
@@ -83,12 +87,9 @@ abstract class BaseDao implements ICrudDAO{
             $smt=$this->con->prepare($sqlInsert.$sqlValues);
             $smt->execute();
             return $smt->rowCount();
-            //$this->con->exec($sqlInsert.$sqlValues);
-        
         } catch(Exception $e){
             $this->con=null;
-            throw new Exception($e->getMessage(),$e->getCode());
-                       
+            throw new Exception($e->getMessage(),$e->getCode());           
         }
         
     }
@@ -115,7 +116,6 @@ abstract class BaseDao implements ICrudDAO{
                         $sqlUpdate.="$key";
                         switch($tipo){
                             case "string";
-                                
                                 $sqlUpdate.="='$valor', ";
                                 break;
                             case "integer";
@@ -135,9 +135,8 @@ abstract class BaseDao implements ICrudDAO{
             }
             $sqlUpdate=substr($sqlUpdate, 0, -2);
             $sqlUpdate.= " WHERE $this->primaryKey=".$obj[$this->primaryKey];
-            $stmt=$this->con->prepare($sqlUpdate);
-           
             
+            $stmt=$this->con->prepare($sqlUpdate);
             return $stmt->execute();
 
         }catch(Exception $e){
@@ -169,8 +168,9 @@ abstract class BaseDao implements ICrudDAO{
         return $stmt->fetch();
     }
 
-    public function Destroy($id){
+    public function Destroy($id):int{
         $this->con=DBConnection::connect();
-        $stmt = $this->con->query("DELETE FROM $this->table WHERE $this->primaryKey=$id");
+        $stmt = $this->con->prepare("DELETE FROM $this->table WHERE $this->primaryKey=$id");
+        return $stmt->execute();
     }
 }

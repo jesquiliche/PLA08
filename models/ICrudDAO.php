@@ -12,7 +12,7 @@ interface ICrudDAO {
     public function FindAll():array; 
     public function FindById(string $id):array;
 
-    public function Destroy(int $id);
+    public function Destroy(int $id):int;
    
     
     
