@@ -45,48 +45,27 @@ abstract class BaseDao implements ICrudDAO{
             $this->con=DBConnection::connect();
             $sqlInsert="INSERT INTO $this->table(";
             $sqlValues=" VALUES(";
-            print $obj["nombre"];
-            $valor= $obj["nombre"];
-            $valor= filter_var($valor,FILTER_SANITIZE_STRIPPED);
-           
-        
-        
-            return 0;
+            
+            $valores=array();
             //Leer lista de campos del Array
             foreach($obj as $key=>$valor){
                 if($key!==$this->exclude){
+                    $valor= filter_var($valor,FILTER_SANITIZE_ADD_SLASHES);
                     $sqlInsert.="$key,";
-                    $valor=$obj[$key];
-                    $tipo=gettype($valor);
-                                
-                    $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
-                    //Construir el values a partir del tipo de dato
-                    //Si es string lo encerrara entre comillas simples
-                    switch($tipo){
-                        case "string";
-                            $sqlValues.="'$valor',";
-                            break;
-                        case "integer";
-                            $valor=(int)$valor;
-                            $sqlValues.="$valor,";
-                            break;
-                        case "double";
-                            $valor=floatval($valor);
-                            $sqlValues.="$valor,";
-                            break;
-                        default;
-                            $sqlValues.="'$valor',";
-                            break;      
-                     }
-                    
+                    $valores[]=$valor;
+                    $sqlValues.="?,";
                 }
             }
             //Quitar última coma de las cadenas y cerrarlas con parentesis
+         
             $sqlInsert=substr($sqlInsert, 0, -1).") \n";
+           // print $sqlInsert;
             $sqlValues=substr($sqlValues, 0, -1).") ";
+            print $sqlValues;
             $smt=$this->con->prepare($sqlInsert.$sqlValues);
-            $smt->execute();
+            $smt->execute($valores);
             return $smt->rowCount();
+         
         } catch(Exception $e){
             $this->con=null;
             throw new Exception($e->getMessage(),$e->getCode());           
@@ -98,8 +77,8 @@ abstract class BaseDao implements ICrudDAO{
         try{
             $this->con=DBConnection::connect();
             $sqlUpdate="UPDATE $this->table SET ";
-            $sqlValues=" VALUES(";
             
+            $valores=array();
         
             //Leer lista de campos del Array
             
@@ -107,44 +86,28 @@ abstract class BaseDao implements ICrudDAO{
                     if($key!==$this->exclude){        
                     $valor=$obj[$key];
                     $valor= filter_var($valor, FILTER_SANITIZE_ADD_SLASHES);
-                    $tipo=gettype($valor);
+                
                     
                     //Si no es el campo clave actualizar
                     if($key!=$this->primaryKey){
                         //Construir el values a partir del tipo de dato
                         //Si es string lo encerrara entre comillas simples
-                        $sqlUpdate.="$key";
-                        switch($tipo){
-                            case "string";
-                                $sqlUpdate.="='$valor', ";
-                                break;
-                            case "integer";
-                                $valor=(int)$valor;
-                                $sqlUpdate.="=$valor, ";;
-                                break;
-                            case "double";
-                                $valor=floatval($valor);
-                                $sqlUpdate.="=$valor, ";                        
-                                break;
-                            default;
-                                $sqlUpdate.="=$valor, ";
-                                break;      
-                        }
+                        $sqlUpdate.="$key=";
+                        $valores[]=$valor;
+                        $sqlUpdate.="?,"; 
                     }
                 }   
             }
-            $sqlUpdate=substr($sqlUpdate, 0, -2);
+            $sqlUpdate=substr($sqlUpdate, 0, -1);
             $sqlUpdate.= " WHERE $this->primaryKey=".$obj[$this->primaryKey];
             
             $stmt=$this->con->prepare($sqlUpdate);
-            return $stmt->execute();
+            return $stmt->execute($valores);
 
         }catch(Exception $e){
             $this->con=null;
             throw new Exception($e->getMessage(), 1);
         }
-        
-       
     }
 
     public function FindAll():array{
