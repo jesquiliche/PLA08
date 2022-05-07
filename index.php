@@ -3,6 +3,7 @@
 	require_once "./models/BaseModelDAO.php";
 	require_once "./models/MyPersonaDAO.php";
 	require_once "./utils/utils.php";
+	require_once "./funciones/funciones.php";
 	//inicializar variables
 
 	$idpersona="";
@@ -44,72 +45,19 @@
 	$persona=new MyPersonaDAO();
 
 	if(isset($_POST['alta'])){
-		if(validarDatos($_POST)){
-			try{
-				
-				$persona->setExclude('alta');
-				if($persona->Create($_POST)>0)
-					$mensaje="Persona dada de alta";
-			} catch(Exception $e){
-				if($e->getCode()==23000)
-					array_push($errores,"El nif ya existe en la Base de datos");
-			}
-		}
+		alta();
 	}
 
 	if(isset($_POST['modificacion'])){
-		try {
-			if(!is_null($_POST['idpersona']) && $_POST['idpersona']!="")
-			{ 
-				if(validarDatos($_POST)){
-					$modificaciones=$persona->IsModifiedRecord($_POST['idpersona'],$_POST,$nif2);
-					if(!$modificaciones){
-						$mensaje="persona no modificada";
-					} else {
-						$persona->setExclude('modificacion');
-						if($datos=$persona->Update($_POST)>0)
-							$mensaje="Datos modificados";
-						else
-							$mensaje="Esta persona ya no se encuentra en la BB.DD";
-						limpiar();
-						
-					} 
-				} 
-			} else {
-				$mensaje="Se debe seleccionar una persona valida.";
-			}
-		
-		} catch(Exception $e){
-			if($e->getCode()==23000)
-			array_push($errores,"El nif ya existe en la Base de datos");
-		}
-		
+		modificacion();
 	}
 
 	if(isset($_POST['consulta'])){
-		$persona->setExclude('consulta');
-		$datos=$persona->FindById($_POST['consulta']);
-		cargaDatos($datos);
+		consulta();
 	}
 
 	if(isset($_POST['baja'])){
-		try{
-			if(!is_null($_POST['idpersona']) && $_POST['idpersona']!="")
-			{
-				$persona->setPrimaryKey('idpersona');	
-				if($persona->Destroy($_POST['idpersona'])>0)
-					$mensaje="Persona dada de baja";
-				else
-					$mensaje="Esta persona ya no se encuentre en la BB.DD";
-			} else {
-				$mensaje="Se debe seleccionar una persona valida.";
-			}
-			
-		} catch(Exception $e){
-			if($e->getCode()==23000)
-				array_push($errores,"Esta persona no se puede borrar de la base de datos. \nTiene cuentas asociadas");
-				cargaDatos($_POST);
-		}
+		baja();
 	}
 ?>
 
