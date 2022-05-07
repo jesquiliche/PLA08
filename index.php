@@ -39,10 +39,6 @@
 	}
 	
 	
-	
-
-	
-
 	//Construimos el objeto de acceso a datos
 	//Patrón de diseño DAO
 	$persona=new MyPersonaDAO();
@@ -63,22 +59,27 @@
 
 	if(isset($_POST['modificacion'])){
 		try {
-			if(validarDatos($_POST)){
-				$modificaciones=$persona->IsModifiedRecord($_POST['idpersona'],$_POST,$nif2);
-				if(!$modificaciones){
-					$mensaje="persona no mofificada";
-			
-				} else {
-					print $nif2;
-					$persona->setExclude('modificacion');
-					if($datos=$persona->Update($_POST)>0)
-						$mensaje="Datos modificados";
-					else
-						$mensaje="Esta persona ya no se encuentra en la BB.DD";
-					limpiar();
-				}
+			if(!is_null($_POST['idpersona']) && $_POST['idpersona']!="")
+			{ 
+				if(validarDatos($_POST)){
+					$modificaciones=$persona->IsModifiedRecord($_POST['idpersona'],$_POST,$nif2);
+					if(!$modificaciones){
+						$mensaje="persona no modificada";
+					} else {
+						$persona->setExclude('modificacion');
+						if($datos=$persona->Update($_POST)>0)
+							$mensaje="Datos modificados";
+						else
+							$mensaje="Esta persona ya no se encuentra en la BB.DD";
+						limpiar();
+						
+					} 
+				} 
+			} else {
+				$mensaje="Se debe seleccionar una persona valida.";
 			}
-		}catch(Exception $e){
+		
+		} catch(Exception $e){
 			if($e->getCode()==23000)
 			array_push($errores,"El nif ya existe en la Base de datos");
 		}
@@ -93,11 +94,17 @@
 
 	if(isset($_POST['baja'])){
 		try{
-			$persona->setPrimaryKey('idpersona');	
-			if($persona->Destroy($_POST['idpersona'])>0)
-				$mensaje="Persona dada de baja";
-			else
-				$mensaje="Esta persona ya no se encuentre en la BB.DD";	
+			if(!is_null($_POST['idpersona']) && $_POST['idpersona']!="")
+			{
+				$persona->setPrimaryKey('idpersona');	
+				if($persona->Destroy($_POST['idpersona'])>0)
+					$mensaje="Persona dada de baja";
+				else
+					$mensaje="Esta persona ya no se encuentre en la BB.DD";
+			} else {
+				$mensaje="Se debe seleccionar una persona valida.";
+			}
+			
 		} catch(Exception $e){
 			if($e->getCode()==23000)
 				array_push($errores,"Esta persona no se puede borrar de la base de datos. \nTiene cuentas asociadas");
@@ -167,7 +174,6 @@
 			    <div class="col-sm-10">
 			      <input type="text" 
 				  maxlength="9"
-				  required
 				  value='<?=$telefono?>'
 				  class="form-control" id="telefono" name="telefono">
 			    </div>
@@ -204,13 +210,21 @@
 	
 		<?php 
 	  $personas=$persona->FindAll();
-	  foreach($personas as $row) {
-		echo "<tr data-id=$row[idpersona]>";
-		echo "<td>$row[nif]</td>";
-		echo "<td>$row[nombre]</td>";
-		echo "<td>$row[apellidos]</td>";
-		echo "</tr>";
-	  }
+	  if(count($personas)>0){
+		foreach($personas as $row) {
+			echo "<tr data-id=$row[idpersona]>";
+			echo "<td>$row[nif]</td>";
+			echo "<td>$row[nombre]</td>";
+			echo "<td>$row[apellidos]</td>";
+			echo "</tr>";
+		  }
+		} else {
+			
+			$mensaje="No hay datos";
+		}
+	
+
+	  
 	  ?>
 		</table>
 	</div>
